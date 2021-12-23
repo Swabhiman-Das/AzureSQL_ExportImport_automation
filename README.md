@@ -1,11 +1,11 @@
 ## Automate Azure SQL DB Export & import using Azure Runbook.
 ###### *****Flow of Code*****
 
-**Scaling the source database to a higer Service tier (user choise).
+**Scaling the source database to a higer Service tier (user choice).
  
-**Exporting the Database to Azure Storage account (user choise).
+**Exporting the Database to Azure Storage account (user choice).
  
-**Deleting the existing Database in the target server (user choise).
+**Deleting the existing Database in the target server (user choice).
 
 **Importing a new database with same name in the target server.
  
@@ -19,4 +19,5 @@
  6) Copy paste the Code attached and give the Variable declaration manually. 
  7) Click on test pane and Start. 
  8) On successful test , create a schedule and attach that to the runbook , which will trigger the execution automatically 
+
 
