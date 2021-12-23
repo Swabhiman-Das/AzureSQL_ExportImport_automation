@@ -1,5 +1,5 @@
 ## Automate Azure SQL DB Export & import using Azure Runbook.
-###### *****Working principle*****
+###### *****Flow of Code*****
 
 **Scaling the source database to a higer Service tier (user choise).
  
