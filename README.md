@@ -1,4 +1,5 @@
-###### Here is an automation flow using powershell that helps you to schedule and automate your regular Export import operation Using Azure Runbook.The flow works as below  
+## Automate Azure SQL DB Export & import using Azure Runbook.
+###### *****Working principle*****
 
 **Scaling the source database to a higer Service tier (user choise).
  
@@ -11,7 +12,7 @@
 **STEPS TO SCHEDULE AUTOMATION IN AZURE RUNBOOK** 
  
  1) Create automation account (with run as an account YES). Import SQLserver, Azaccouts modules from the Gallery
- 2) Create credentials for source and target server name it as Sourcesever and Targetserver. Username should be the SQL admin username and Password 
+ 2) Create credentials for both source and target server and save it as Sourcesever and Targetserver. Username should be the SQL admin username and Password 
  3) Create the storage account and a container. copy the container URL and save in a notepad.
  4) Generate the SAS key with Full permission for the Container and save it in a notepad.  
  5) Go back to Automation account and create a runbook with PowerShell. -> Click Edit.
