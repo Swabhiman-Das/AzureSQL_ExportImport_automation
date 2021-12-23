@@ -1,12 +1,12 @@
 ###### Here is an automation flow using powershell that helps you to schedule and automate your regular Export import operation Using Azure Runbook.The flow works as below  
 
-_**Scaling the source database to a higer Service tier (user choise).
+**Scaling the source database to a higer Service tier (user choise).
  
-_**Exporting the Database to Azure Storage account (user choise).
+**Exporting the Database to Azure Storage account (user choise).
  
-_**Deleting the existing Database in the target server (user choise).
- 
-_**Importing a new database with same name in the target server._ 
+**Deleting the existing Database in the target server (user choise).
+
+**Importing a new database with same name in the target server.
  
 **STEPS TO SCHEDULE AUTOMATION IN AZURE RUNBOOK** 
  
