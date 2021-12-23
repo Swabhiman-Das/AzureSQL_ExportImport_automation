@@ -1,4 +1,25 @@
-#Establish a connection to ARM through AZ 
+####################### Varrible Declaration ####################################
+##ENTER THE BELOW DETAILS##
+$sourceresourcegroup='YOUR RESOURCE GROUP NAME'
+$sourceServer = 'SOURCE SERVER NAME'
+$sourceDB = 'SOURCE DATABASE NAME' 
+$SourceDBEdition = 'SOURCE DB EDITION EG: Standard'
+$RequestedServiceObjectiveName = ' SKU YOU WANT THE SOURCE DB TO BE SCALED UP BEFORE EXPORT eg: s4'
+$TargetResourcegroup = 'TARGET RESOUCE GROUP NAME'
+$targetServer='TARGET SERVER NAME'
+$targetDB='TARGET DATABASE NAME'
+$targetEdition = 'TARGET DATABASE EDITION (EG: BASIC/STANDARD etc..)'
+$targetslo = 'TARGET SKU (S4/s6 etc..)'
+$targetmaxsizeofDB = 2147483648 #TARGET SIZE
+$BaseStorageUri = "https://Example.blob.core.windows.net/example"  #STORAGE URI
+$StorageKeytype = "SharedAccessKey"
+$StorageKey = "sp=racwdl&st=2021-10-*********8nmLl5M%3D" # SAS KEY WITH FULL ACCESS
+$bacpacFilename = "$sourceDB" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".bacpac"
+$BacpacUri = $BaseStorageUri + "/test/" + $bacpacFilename
+$SourceCred = Get-AutomationPSCredential -Name "SourceServer"
+$TargetCred = Get-AutomationPSCredential -Name "TargetServer"
+
+##################Establish a connection to ARM through AZ###############################
 
 $connectionName = "AzureRunAsConnection"
 try
@@ -18,24 +39,6 @@ catch {
         throw $_.Exception
     }
 }
-####################### Varrible Declaration ####################################
-
-$sourceresourcegroup='myrg'
-$sourceServer = 'ourfreeserver'
-$sourceDB = 'source' 
-$TargetResourcegroup = 'myrg'
-$targetServer='mytargetspy'
-$targetDB='target'
-$targetEdition = 'standard'
-$targetslo = 'S2'
-$targetmaxsizeofDB = 2147483648
-$BaseStorageUri = "https://shatedstorage.blob.core.windows.net/dbrefresh"
-$bacpacFilename = "$sourceDB" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".bacpac"
-$BacpacUri = $BaseStorageUri + "/test/" + $bacpacFilename
-$StorageKeytype = "SharedAccessKey"
-$StorageKey = "sp=racwdl&st=2021-10-19T10:39:20Z&se=2021-10-29T18:39:20Z&sv=2020-08-04&sr=c&sig=WGW%2F88mzYrHx%2FJH6quiMsI4ykIDDIJTOqlsF8nmLl5M%3D"
-$SourceCred = Get-AutomationPSCredential -Name "SourceServer"
-$TargetCred = Get-AutomationPSCredential -Name "TargetServer"
 
 ###################  Function Defination  ############################################
 
@@ -64,7 +67,7 @@ While( $Actualstatus -eq "InProgress")
 function ScalingConfirmation($scaledDB)
 {
  $ScalingStats =  Get-AzSqlDatabase -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $sourceDB | select -Expandproperty CurrentServiceObjectiveName
- while($ScalingStats -ne 'S4')
+ while($ScalingStats -ne $RequestedServiceObjectiveName)
   {
       $ScalingStats =  Get-AzSqlDatabase -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $scaledDB | select -Expandproperty CurrentServiceObjectiveName
       start-sleep -s 10
@@ -88,19 +91,19 @@ function Checkdropstats($dropDbname)
 ####################  Code flow Phase 1 - export to Storage  ########################################################## 
 
 $currentSKU = Get-AzSqlDatabase -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $sourceDB | select -Expandproperty CurrentServiceObjectiveName
-if($currentSKU -ne 'S4')
+if($currentSKU -ne $RequestedServiceObjectiveName)
 {
-  $Scaling = Set-AzSqlDatabase -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $sourceDB -Edition Standard -RequestedServiceObjectiveName S4 |select -Expandproperty CurrentServiceObjectiveName
+  $Scaling = Set-AzSqlDatabase -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $sourceDB $SourceDBEdition Standard -RequestedServiceObjectiveName $RequestedServiceObjectiveName |select -Expandproperty CurrentServiceObjectiveName
 }
 $scalingresult = ScalingConfirmation -scaledDB $Scaling.DatabaseName
-if($scalingresult -eq 'S4')
+if($scalingresult -eq $RequestedServiceObjectiveName)
   {
 $exportRequest = New-AzSqlDatabaseExport -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $sourceDB  -StorageKeytype $StorageKeytype -StorageKey $StorageKey -StorageUri $BacpacUri -AuthenticationType Sql -AdministratorLogin $SourceCred.Username -AdministratorLoginPassword $SourceCred.password
 $exportStatus= Checkimportexport -operationID $exportRequest.OperationStatusLink
    }
 if($exportStatus -eq 'Succeeded')
   {
-      $scaleback = Set-AzSqlDatabase -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $sourceDB -Edition Standard -RequestedServiceObjectiveName S2
+  $scaleback = Set-AzSqlDatabase -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $sourceDB -Edition $SourceDBEdition -RequestedServiceObjectiveName $currentSKU
     }
 ##################  Code flow phase 2 - Import to Server  ###############################################################
 
