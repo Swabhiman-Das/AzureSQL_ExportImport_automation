@@ -45,7 +45,7 @@ $SourceCred = Get-AutomationPSCredential -Name "SourceServer"
 $TargetCred = Get-AutomationPSCredential -Name "TargetServer"
 
 
-#Establish a connection to ARM through AZ 
+################Establish a connection to ARM through AZ######################
 
 $connectionName = "AzureRunAsConnection"
 try
@@ -117,7 +117,7 @@ function Checkdropstats($dropDbname)
   }
 
 
-####################  Code flow Phase 1 - export to Storage  ########################################################## 
+####################  Code flow Phase 1 - export to Storage  ##############################################
 
 $currentSKU = Get-AzSqlDatabase -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $sourceDB 
 
@@ -137,7 +137,7 @@ if($exportStatus -eq 'Succeeded')
   {
       $scaleback = Set-AzSqlDatabase -ResourceGroupName $sourceresourcegroup -ServerName $sourceServer -DatabaseName $sourceDB -Edition $currentSKU.edition -RequestedServiceObjectiveName $currentSKU.CurrentServiceObjectiveName
     }
-##################  Code flow phase 2 - Import to Server  ###############################################################
+##################  Code flow phase 2 - Import to Server  ############################################
 
 
 if($exportStatus -eq "Succeeded")
