@@ -20,26 +20,27 @@
  7) Click on test pane and Start. 
  8) On successful test , create a schedule and attach that to the runbook , which will trigger the execution automatically 
  9) Detiled Scheduling Information can be found in the "SETUP_INDETAILED" Doc
+ 10) Please Note , Azure Automation account requires firewall access to Azure SQl DB . Please ensure allow azure services to access this server is enabled .
 
 ```
 
 ####################### Varrible Declaration ####################################
-$sourceresourcegroup='myrg'
-$sourceServer = 'mymssqlserver11'
-$sourceDB = 'testcmk' 
-$ScaleSourceDBedition= 'Standard'
-$scalesourceDBSLO = 'S0'
-$TargetResourcegroup = 'myrg'
-$targetServer='testsouth'
-$targetDB='target'
-$targetEdition = 'standard'
-$targetslo = 'S2'
-$targetmaxsizeofDB = 2147483648
-$BaseStorageUri = "https://newaudit.blob.core.windows.net/exportdb"
+$sourceresourcegroup='SourceResourceGroupname'
+$sourceServer = 'SourceServername'
+$sourceDB = 'SourceDatabaseName' 
+$ScaleSourceDBedition= 'Edition,SourceDB to be scaled up before exporting'
+$scalesourceDBSLO = 'SLO ,SourceDB to be scaled up before exporting'
+$TargetResourcegroup = 'TargetResourceGroupName'
+$targetServer='TargetServername'
+$targetDB='targetDBName'
+$targetEdition = 'TargetDBedition'
+$targetslo = 'TargetDBSLO'
+$targetmaxsizeofDB = 2147483648 #TargetMaxDBSize
+$BaseStorageUri = "https://Test.blob.core.windows.net/Container" #target Storage URL
 $bacpacFilename = "$sourceDB" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".bacpac"
 $BacpacUri = $BaseStorageUri + "/test/" + $bacpacFilename
 $StorageKeytype = "SharedAccessKey"
-$StorageKey = "sp=racwdl&st=2022-01-16T08:03:47Z&se=2022-08-11T16:03:47Z&sv=2020-08-04&sr=c&sig=nDSNoz%2FPKnwyCFCQULd1r1PCmBn0CEqnuwh5Yt1hrYk%3D"
+$StorageKey = "sp=ra***#"  #Storage SAS KEY
 $SourceCred = Get-AutomationPSCredential -Name "SourceServer"
 $TargetCred = Get-AutomationPSCredential -Name "TargetServer"
 
