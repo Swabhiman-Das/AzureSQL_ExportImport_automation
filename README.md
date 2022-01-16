@@ -21,6 +21,8 @@
  8) On successful test , create a schedule and attach that to the runbook , which will trigger the execution automatically 
  9) Detiled Scheduling Information can be found in the "SETUP_INDETAILED" Doc
  10) Please Note , Azure Automation account requires firewall access to Azure SQl DB . Please ensure allow azure services to access this server is enabled .
+ 11) Please Note , The Max Timeout limit for Azure automation is 3 hours , In case the database size is big consider implementing hybrid runbook.
+ 12) Please note, The max Export size is limited to 200 GB , If the DB size is more that 200 GB , consider using SQL package or any ETL solution 
 
 ```
 
